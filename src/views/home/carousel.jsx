@@ -1,5 +1,5 @@
 import { Skeleton } from 'antd'
-import axios from 'axios'
+import api from '../../api'
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Slider from 'react-slick'
@@ -11,8 +11,8 @@ const Carousel = () => {
 	const [data, setData] = useState([])
 
 	useEffect(() => {
-		axios
-			.get(`https://api.protools.uz/v1/banners`)
+		api
+			.get(`/banners`)
 			.then(response => {
 				setData(response.data.data)
 				setLoading(false)
@@ -55,7 +55,7 @@ const Carousel = () => {
 								<Link to={item.link}>
 									<img
 										src={item.imageUrl}
-										alt={item.title}
+										alt={item.title_uz}
 										width={100}
 										height={480}
 									/>

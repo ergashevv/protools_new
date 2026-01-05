@@ -1,11 +1,11 @@
 import { Button, Drawer, Input, Select, Skeleton } from 'antd'
-import axios from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { HiOutlineViewGrid } from 'react-icons/hi'
 import { HiOutlineShoppingBag } from 'react-icons/hi2'
 import { LiaToolsSolid } from 'react-icons/lia'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
+import api from '../api'
 import logo from '../assets/svg/logoProtools.svg'
 import { useDataContext } from '../contexts/DataContext'
 import '../global.scss'
@@ -104,8 +104,8 @@ function Header() {
 
 	useEffect(() => {
 		if (keys) {
-			axios
-				.get(`https://api.protools.uz/v1/products?search=${keys}&limit=1000`)
+			api
+				.get(`/products?search=${keys}&limit=1000&status=ACTIVE`)
 				.then(response => {
 					setData(response.data.data)
 					setShowSearchResults(true)
@@ -115,8 +115,8 @@ function Header() {
 				})
 		}
 
-		axios
-			.get('https://api.protools.uz/v1/categories')
+		api
+			.get('/categories?limit=100')
 			.then(res => {
 				setCatalog(res.data.data)
 				setLoading(false)
@@ -205,18 +205,18 @@ function Header() {
 										<div className='search_results_img_wrap'>
 											<img
 												src={item.images[0]}
-												alt={i18n.language === 'uz' ? item.slug : item.title}
+												alt={i18n.language === 'uz' ? item.title_uz : item.title_ru}
 											/>
 										</div>
 										<div className='search_results_texts'>
-											<h3>{i18n.language === 'uz' ? item.slug : item.title}</h3>
+											<h3>{i18n.language === 'uz' ? item.title_uz : item.title_ru}</h3>
 											<p>
 												{item.price !== 0
 													? `${item.price.toLocaleString({
-															style: 'currency',
-															minimumFractionDigits: 0,
-															currency: 'UZS',
-													  })} ${t('Sum')}`
+														style: 'currency',
+														minimumFractionDigits: 0,
+														currency: 'UZS',
+													})} ${t('Sum')}`
 													: ''}
 											</p>
 										</div>
@@ -257,7 +257,7 @@ function Header() {
 											className='header_drawler_left_link'
 										>
 											<span>
-												{i18n.language === 'uz' ? item.slug : item.title}
+												{i18n.language === 'uz' ? item.title_uz : item.title_ru}
 											</span>
 											<svg
 												xmlns='http://www.w3.org/2000/svg'
@@ -288,8 +288,8 @@ function Header() {
 																onClick={toggleMenu}
 															>
 																{i18n.language === 'uz'
-																	? child.slug
-																	: child.title}
+																	? child.title_uz
+																	: child.title_ru}
 															</Link>
 														</li>
 														{child.length > 5 ? (
@@ -341,7 +341,7 @@ function Header() {
 										fill='#8A9198'
 									/>
 								</svg>{' '}
-								{selectedCategory.title}
+								{i18n.language === 'uz' ? selectedCategory.title_uz : selectedCategory.title_ru}
 							</span>
 							{selectedCategory?.children.map((child, index) => (
 								<Link
@@ -352,7 +352,7 @@ function Header() {
 									}}
 									key={index}
 								>
-									{i18n.language === 'uz' ? child.title : child.slug}
+									{i18n.language === 'uz' ? child.title_uz : child.title_ru}
 								</Link>
 							))}
 						</div>
@@ -365,7 +365,7 @@ function Header() {
 										className='header_mobile_parent_wrap'
 										onClick={() => handleCatalogClick(item)}
 									>
-										<h3>{i18n.language === 'uz' ? item.title : item.slug}</h3>
+										<h3>{i18n.language === 'uz' ? item.title_uz : item.title_ru}</h3>
 										<svg
 											xmlns='http://www.w3.org/2000/svg'
 											width='5'

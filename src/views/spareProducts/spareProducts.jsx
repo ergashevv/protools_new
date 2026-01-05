@@ -1,4 +1,4 @@
-import axios from 'axios'
+import api from '../../api'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
@@ -13,9 +13,9 @@ function SpareProducts() {
 
 	useEffect(() => {
 		if (id) {
-			axios
+			api
 				.get(
-					`https://back2.protools.uz/api/maxsulot/?include=zapchast&filter[zapchast_id]=${id}`
+					`/zapchast/products?zapchast_id=${id}&status=ACTIVE`
 				)
 				.then(response => {
 					setProducts(response.data.data)
@@ -47,7 +47,7 @@ function SpareProducts() {
 												? product?.name_uz
 												: product?.name_ru
 										}
-										image={`http://167.71.68.40/${product?.image}`}
+										image={product?.image}
 										price={product?.price}
 										path={`/spare/product/${product?.id}`}
 										excerpt={product?.status}

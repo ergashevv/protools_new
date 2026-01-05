@@ -1,5 +1,5 @@
 import { Pagination, Skeleton } from 'antd'
-import axios from 'axios'
+import api from '../../api'
 import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import YouTube from 'react-youtube'
@@ -27,13 +27,13 @@ function News() {
 				const pageParam = url.searchParams.get('page')
 				const initialPage = pageParam ? parseInt(pageParam, 10) : 1
 
-				const response = await axios.get(
-					`https://api.protools.uz/v1/articles?limit=${postsPerPage}&page=${initialPage}`
+				const response = await api.get(
+					`/articles?limit=${postsPerPage}&page=${initialPage}`
 				)
 				setData(response.data.data)
-				setResultCount(response.data.resultCount)
-				setTotalCount(response.data.totalCount)
-				setPagesCount(response.data.pagesCount)
+				setResultCount(response.data.pagination?.total || 0)
+				setTotalCount(response.data.pagination?.total || 0)
+				setPagesCount(Math.ceil((response.data.pagination?.total || 0) / postsPerPage))
 				setCurrentPage(initialPage)
 				setLoading(false)
 			} catch (error) {
@@ -109,9 +109,9 @@ function News() {
 					) : resultCount > 0 ? (
 						currentPosts.map((item, index) => (
 							<div className='news_video' key={index}>
-								<YouTube videoId={item.excerpt} className='video' />
-								<h3>{i18n.language === 'uz' ? item.title : item.author}</h3>
-								<p>{item.body}</p>
+								<YouTube videoId={item.excerpt_uz} className='video' />
+								<h3>{i18n.language === 'uz' ? item.title_uz : item.title_ru}</h3>
+								<p>{i18n.language === 'uz' ? item.body_uz : item.body_ru}</p>
 								<span>{formatDate(item.createdAt)}</span>
 							</div>
 						))

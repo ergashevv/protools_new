@@ -1,8 +1,8 @@
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Navigation } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import api from '../api'
 import ProductCard from '../components/productCard'
 import { useDataContext } from '../contexts/DataContext'
 import '../global.scss'
@@ -15,8 +15,8 @@ function FamousProduct() {
 	const { t, i18n } = useTranslation()
 
 	useEffect(() => {
-		axios
-			.get(`https://api.protools.uz/v1/products?featured=true`)
+		api
+			.get(`/products?featured=true&limit=20&status=ACTIVE`)
 			.then(res => {
 				setData(res.data.data)
 				setLoading(false)
@@ -101,16 +101,14 @@ function FamousProduct() {
 									image={item.images[0]}
 									title={
 										i18n.language === 'uz'
-											? item?.title
-											: item?.additionalInfos.find(
-													info => info.key === 'titleRu'
-											  )?.value
+											? item?.title_uz
+											: item?.title_ru
 									}
 									price={item.price}
 									path={`/product/${item.slug}`}
 									like={isLike(item)}
 									handlerShare={() => handleShare(item)}
-									excerpt={item.excerpt}
+									excerpt={item.excerpt_uz}
 								/>
 							</SwiperSlide>
 						))}

@@ -1,5 +1,5 @@
 import { Drawer, Skeleton } from 'antd'
-import axios from 'axios'
+import api from '../api'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
@@ -11,8 +11,8 @@ function Spare({ isSpare, toggleSpare }) {
 	const { i18n } = useTranslation()
 
 	useEffect(() => {
-		axios
-			.get('https://back2.protools.uz/api/zapchast/')
+		api
+			.get('/zapchast')
 			.then(response => {
 				setSpareParts(response.data.data)
 				setLoading(false)
@@ -44,7 +44,7 @@ function Spare({ isSpare, toggleSpare }) {
 								onClick={toggleSpare}
 							>
 								<img
-									src={`http://167.71.68.40/${sparePart?.image}`}
+									src={sparePart?.image}
 									alt={
 										i18n.language === 'uz'
 											? sparePart.name_uz

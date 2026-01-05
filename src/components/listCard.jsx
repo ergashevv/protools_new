@@ -5,7 +5,7 @@ import { useDataContext } from '../contexts/DataContext'
 import '../global.scss'
 
 function ListCard({ data }) {
-	const { images, price, slug, excerpt } = data
+	const { images, price, slug, excerpt_uz, excerpt_ru } = data
 	console.log(data)
 	const {
 		handleShare,
@@ -28,35 +28,32 @@ function ListCard({ data }) {
 			</div>
 			<div className='right'>
 				<div className='right_top'>
-					<span className={excerpt ? "yeah" : "no_yeah"}>{excerpt ? t('Stock') : t('UnStock')}</span>
+					<span className={excerpt_uz ? "yeah" : "no_yeah"}>{excerpt_uz ? t('Stock') : t('UnStock')}</span>
 					<a
-						href={`/brand/${
-							data?.additionalInfos?.find(info => info.key === 'brand')?.value
-						}`}
+						href={`/brand/${data?.brand?._id}`}
 						className='brand'
 					>
-						{data?.additionalInfos?.find(info => info.key === 'brand')?.value}
+						{i18n.language === 'uz' ? data?.brand?.name_uz : data?.brand?.name_ru}
 					</a>
 				</div>
 				<a href={`/product/${slug}`} className='title'>
 					{i18n.language === 'uz'
-						? data?.title
-						: data?.additionalInfos.find(info => info.key === 'titleRu')?.value}
+						? data?.title_uz
+						: data?.title_ru}
 				</a>
 				<span className='description'>
 					{' '}
 					{i18n.language === 'uz'
-						? data?.description
-						: data?.additionalInfos.find(info => info.key === 'descriptionRu')
-								?.value}
+						? data?.description_uz
+						: data?.description_ru}
 				</span>
 				<span className='price'>
 					{price !== 0
 						? `${price?.toLocaleString({
-								style: 'currency',
-								minimumFractionDigits: 0,
-								currency: 'UZS',
-						  })} ${t('Sum')} `
+							style: 'currency',
+							minimumFractionDigits: 0,
+							currency: 'UZS',
+						})} ${t('Sum')} `
 						: ''}
 				</span>
 				<div className='wrapper'>

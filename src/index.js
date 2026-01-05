@@ -5,7 +5,10 @@ import { I18nextProvider } from "react-i18next";
 import App from "./App";
 import { DataProvider } from "./contexts/DataContext";
 import { MenuProvider, TitleProvider } from "./contexts/contexts";
+import axios from "axios";
 import "./i18n";
+
+axios.defaults.baseURL = process.env.REACT_APP_API_URL || '';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

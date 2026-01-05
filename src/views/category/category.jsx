@@ -1,9 +1,9 @@
 import { Pagination, Skeleton, Tabs } from 'antd'
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
+import api from '../../api'
 import notFound from '../../assets/svg/noData.svg'
 import Breadcrumbs from '../../components/breadcrumbs'
 import ListCard from '../../components/listCard'
@@ -31,36 +31,36 @@ function Category() {
 		limit: 14,
 		pagesCount: 1,
 	})
-	const URL = 'https://api.protools.uz/v1'
+	const URL = ''
 	const { addLike, addCart, isLike, handleShare } = useDataContext()
 	const [viewMode, setViewMode] = useState('grid')
 	const { t, i18n } = useTranslation()
 
 	useEffect(() => {
-		axios
-			.get(`${URL}/categories`)
+		api
+			.get(`/categories?parentId=all&limit=100`)
 			.then(res => {
 				setTitle(
 					res?.data?.data
-						.flatMap(i => [i, ...i.children])
-						.filter(child => child._id === id)
+						.flatMap(i => [i, ...(i.children || [])])
+						.filter(child => child._id === id || child.id === parseInt(id))
 						.map(child => child)
 				)
 			})
-			.catch(err => {})
+			.catch(err => { })
 		const fetchData = async () => {
 			try {
-				const res = await axios.get(
-					`${URL}/products/?category.oid=${id}&page=${currentPage}&limit=${params.limit}`
+				const res = await api.get(
+					`/products?categoryId=${id}&page=${currentPage}&limit=${params.limit}&status=ACTIVE`
 				)
 
 				setData(res.data)
 				setParams({
-					resultCount: res.data.resultCount,
-					totalCount: res.data.totalCount,
+					resultCount: res.data.pagination?.total || 0, // Using total for resultCount
+					totalCount: res.data.pagination?.total || 0,
 					currentPage: currentPage,
 					limit: params.limit,
-					pagesCount: Math.ceil(res.data.totalCount / params.limit),
+					pagesCount: Math.ceil((res.data.pagination?.total || 0) / params.limit),
 				})
 				setLoading(false)
 			} catch (error) {
@@ -69,7 +69,7 @@ function Category() {
 		}
 
 		fetchData()
-	}, [id, currentPage, params.limit, URL])
+	}, [id, currentPage, params.limit])
 
 	const handlePageChange = page => {
 		setCurrentPage(page)
@@ -131,9 +131,8 @@ function Category() {
 	} else if (data?.data?.length > 0) {
 		content = (
 			<>
-				<h2 className='categoryFilter_title'>{`${
-					i18n.language === 'uz' ? titleObject.slug : titleObject.title
-				} (${data?.totalCount})`}</h2>
+				<h2 className='categoryFilter_title'>{`${i18n.language === 'uz' ? titleObject.title_uz : titleObject.title_ru
+					} (${data?.pagination?.total})`}</h2>
 				<div className='categoryFilter_center'>
 					<div className='categoryFilter_right'>
 						<Tabs defaultActiveKey='grid' onChange={toggleViewMode}>
@@ -152,10 +151,8 @@ function Category() {
 											image={item.images[0]}
 											title={
 												i18n.language === 'uz'
-													? item?.title
-													: item?.additionalInfos.find(
-															info => info.key === 'titleRu'
-													  )?.value
+													? item?.title_uz
+													: item?.title_ru
 											}
 											price={item.price}
 											path={`/product/${item.slug}`}
@@ -221,11 +218,10 @@ function Category() {
 			</Helmet>
 			<Breadcrumbs
 				href={window.location.href}
-				title={`${
-					i18n.language === 'uz'
-						? titleObject.slug || 'Loading...'
-						: titleObject.title || 'Loading...'
-				}`}
+				title={`${i18n.language === 'uz'
+					? titleObject.title_uz || 'Loading...'
+					: titleObject.title_ru || 'Loading...'
+					}`}
 			/>
 			<div className='container'>{content}</div>
 		</div>

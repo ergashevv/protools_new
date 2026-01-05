@@ -1,5 +1,5 @@
 import { Skeleton } from 'antd'
-import axios from 'axios'
+import api from '../../api'
 import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useTranslation } from 'react-i18next'
@@ -41,11 +41,11 @@ function SpareSingle() {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const response = await axios.get(
-					`http://167.71.68.40/api/maxsulot/?filter[id]=${id}`
+				const response = await api.get(
+					`/zapchast/products/${id}`
 				)
 
-				setData(response?.data?.data)
+				setData([response?.data?.data])
 				setLoading(false)
 			} catch (error) {
 				console.error('Error fetching data:', error)
@@ -57,8 +57,8 @@ function SpareSingle() {
 	}, [id])
 
 	useEffect(() => {
-		axios
-			.get('https://api.protools.uz/v1/categories')
+		api
+			.get('/categories')
 			.then(res => {
 				setCatalog(res?.data?.data)
 				setLoading(false)
@@ -73,11 +73,10 @@ function SpareSingle() {
 		<div className='spareSingle'>
 			<Helmet>
 				<title>
-					{`${
-						i18n.language === 'uz'
+					{`${i18n.language === 'uz'
 							? data[0]?.name_uz
 							: data[0]?.name_ru || 'Loading...'
-					}`}
+						}`}
 				</title>
 				<meta property='og:type' content='website' />
 			</Helmet>
@@ -152,11 +151,10 @@ function SpareSingle() {
 							</div>
 							<div className='main_right'>
 								<h2 className='spareSingle_mobile_caption'>
-									{`${
-										i18n.language === 'uz'
+									{`${i18n.language === 'uz'
 											? data[0]?.name_uz
 											: data[0]?.name_ru || 'Loading...'
-									}`}
+										}`}
 								</h2>
 								<div className='spareSingle_wrapper'>
 									<div className='spareSingle_left'>
@@ -174,7 +172,7 @@ function SpareSingle() {
 												data.map((item, index) => (
 													<SwiperSlide key={index} className='swiper_card'>
 														<img
-															src={`http://167.71.68.40/${item?.image}`}
+															src={item?.image}
 															alt={data?.name_uz}
 														/>
 													</SwiperSlide>
@@ -208,7 +206,7 @@ function SpareSingle() {
 												data?.map((item, index) => (
 													<SwiperSlide key={index}>
 														<img
-															src={`http://167.71.68.40/${item?.image}`}
+															src={item?.image}
 															alt={data.name_uz}
 															key={index}
 														/>
@@ -218,11 +216,10 @@ function SpareSingle() {
 									</div>
 									<div className='spareSingle_right'>
 										<h2 className='spareSingle_right_title'>
-											{`${
-												i18n.language === 'uz'
+											{`${i18n.language === 'uz'
 													? data[0]?.name_uz
 													: data[0]?.name_ru || 'Loading...'
-											}`}
+												}`}
 										</h2>
 										<span className='spareSingle_right_info'>
 											{i18n.language === 'uz'
@@ -233,10 +230,10 @@ function SpareSingle() {
 											<span className='spareSingle_right_price'>
 												{data[0]?.price !== 0
 													? `${data[0]?.price?.toLocaleString({
-															style: 'currency',
-															minimumFractionDigits: 0,
-															currency: 'UZS',
-													  })} ${t('Sum')} `
+														style: 'currency',
+														minimumFractionDigits: 0,
+														currency: 'UZS',
+													})} ${t('Sum')} `
 													: ''}
 											</span>
 											<div className='spareSingle_right_box_texts'>

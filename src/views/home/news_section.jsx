@@ -1,5 +1,5 @@
 import { Skeleton } from 'antd'
-import axios from 'axios'
+import api from '../../api'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
@@ -23,8 +23,8 @@ function NewsSection() {
 	}
 
 	useEffect(() => {
-		axios
-			.get('https://api.protools.uz/v1/articles')
+		api
+			.get('/articles')
 			.then(res => {
 				setData(res.data.data)
 				setLoading(false)
@@ -62,9 +62,9 @@ function NewsSection() {
 					) : (
 						data?.slice(0, 3).map((video, index) => (
 							<div className='news_video' key={index}>
-								<YouTube videoId={video.excerpt} className='video' />
-								<h3>{i18n.language === 'uz' ? video.title : video.author}</h3>
-								<p>{video.body}</p>
+								<YouTube videoId={video.excerpt_uz} className='video' />
+								<h3>{i18n.language === 'uz' ? video.title_uz : video.title_ru}</h3>
+								<p>{i18n.language === 'uz' ? video.body_uz : video.body_ru}</p>
 								<span>{formatDate(video.createdAt)}</span>
 							</div>
 						))

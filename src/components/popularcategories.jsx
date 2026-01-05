@@ -1,7 +1,7 @@
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
+import api from '../api'
 import '../global.scss'
 import CategoryCards from './categoryCards'
 import Loadingcatalogcard from './loadingcatalogcard'
@@ -12,8 +12,8 @@ function Popularcategories() {
 	const { t, i18n } = useTranslation()
 
 	useEffect(() => {
-		axios
-			.get(`https://api.protools.uz/v1/categories?featured=true`)
+		api
+			.get(`/categories?featured=true&limit=20`)
 			.then(res => {
 				setData(res.data.data)
 				setLoading(false)
@@ -43,7 +43,7 @@ function Popularcategories() {
 							<Link to={`category/${item._id}`} key={index}>
 								<CategoryCards
 									image={item.image}
-									text={i18n.language === 'uz' ? item.slug : item.title}
+									text={i18n.language === 'uz' ? item.title_uz : item.title_ru}
 								/>
 							</Link>
 						))

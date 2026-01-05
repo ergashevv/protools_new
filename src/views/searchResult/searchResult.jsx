@@ -1,5 +1,5 @@
 import { Pagination } from 'antd'
-import axios from 'axios'
+import api from '../../api'
 import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useTranslation } from 'react-i18next'
@@ -29,15 +29,15 @@ function SearchResult() {
 		const url = new URL(window.location.href)
 		const pageParam = url.searchParams.get('page')
 		const initialPage = pageParam ? parseInt(pageParam, 14) : 1
-		axios
+		api
 			.get(
-				`https://api.protools.uz/v1/products?search=${title.title}&limit=${params.limit}&page=${initialPage}`
+				`/products?search=${title.title}&limit=${params.limit}&page=${initialPage}&status=ACTIVE`
 			)
 			.then(res => {
 				setData(res.data.data)
-				setResultCount(res.data.resultCount)
-				setTotalCount(res.data.totalCount)
-				setPagesCount(res.data.pagesCount)
+				setResultCount(res.data.pagination?.total || 0)
+				setTotalCount(res.data.pagination?.total || 0)
+				setPagesCount(Math.ceil((res.data.pagination?.total || 0) / params.limit))
 				setCurrentPage(initialPage)
 				setLoading(false)
 			})
@@ -94,10 +94,8 @@ function SearchResult() {
 										image={item.images[0]}
 										title={
 											i18n.language === 'uz'
-												? item.title
-												: item.additionalInfos.find(
-														info => info.key === 'titleRu'
-												  )?.value
+												? item?.title_uz
+												: item?.title_ru
 										}
 										price={item.price}
 										onClick={() => addCart(item)}

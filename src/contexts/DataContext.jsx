@@ -1,7 +1,7 @@
 import { Button, Form, Input, Modal, notification } from 'antd'
-import axios from 'axios'
 import React, { createContext, useContext, useRef, useState } from 'react'
 import PhoneInput from 'react-phone-input-2'
+import api from '../api'
 import '../assets/context.scss'
 
 const DataContext = createContext()
@@ -117,7 +117,8 @@ export const DataProvider = ({ children }) => {
 			return
 		}
 
-		if (userData.telephone.trim().length < 12) {
+		const cleanPhone = '+' + userData.telephone.replace(/\D/g, '')
+		if (cleanPhone.length < 13) {
 			notification.error({
 				message: 'Error',
 				description: "Telefon raqamingizni to'liq kiriting.",
@@ -125,21 +126,21 @@ export const DataProvider = ({ children }) => {
 			return
 		}
 
-		const orderData = {
-			products: carts.map(item => ({
-				productName: item.title,
-				productLink: `https://www.protools.uz/product/${item.slug}`,
-				name: userData.username,
-				tell: userData.telephone,
-				count: item.quantity,
-			})),
-		}
-
 		try {
-			const response = await axios.post(
-				'https://api2.protools.uz/api/order/',
-				orderData
+			// In new backend, we send individual orders for each product in the cart
+			await Promise.all(
+				carts.map(item => {
+					const orderData = {
+						name: userData.username,
+						phoneNumber: cleanPhone,
+						count: item.quantity,
+						productLink: `https://www.protools.uz/product/${item.slug}`,
+						productId: item.id || item._id,
+					}
+					return api.post('/orders', orderData)
+				})
 			)
+
 			setCarts([])
 			localStorage.removeItem('carts')
 			setOrderModalVisible(false)

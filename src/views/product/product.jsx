@@ -1,5 +1,5 @@
 import { Skeleton } from 'antd'
-import axios from 'axios'
+import api from '../../api'
 import parse from 'html-react-parser'
 import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
@@ -42,8 +42,8 @@ function Product() {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const response = await axios.get(
-					`https://api.protools.uz/v1/products/slug/${slug}`
+				const response = await api.get(
+					`/products/slug/${slug}`
 				)
 				const responseData = response.data.data
 
@@ -87,8 +87,8 @@ function Product() {
 	}, [slug])
 
 	useEffect(() => {
-		axios
-			.get('https://api.protools.uz/v1/categories')
+		api
+			.get('/categories')
 			.then(res => {
 				setCatalog(res?.data?.data)
 				setLoading(false)
@@ -102,41 +102,33 @@ function Product() {
 		<div className='product'>
 			<Helmet>
 				<title>
-					{`${
-						i18n.language === 'uz'
-							? data?.title
-							: data?.additionalInfos.find(info => info.key === 'titleRu')
-									?.value || 'Loading...'
-					}`}{' '}
+					{`${i18n.language === 'uz'
+						? data?.title_uz
+						: data?.title_ru || 'Loading...'
+						}`}{' '}
 					| Protools
 				</title>
 				<meta
 					name='description'
-					content={`${
-						i18n.language === 'uz'
-							? data?.description
-							: data?.additionalInfos.find(info => info.key === 'descriptionRu')
-									?.value
-					}
+					content={`${i18n.language === 'uz'
+						? data?.description_uz
+						: data?.description_ru
+						}
 `}
 				/>
 				<meta
 					property='og:title'
-					content={`${
-						i18n.language === 'uz'
-							? data?.title
-							: data?.additionalInfos.find(info => info.key === 'titleRu')
-									?.value
-					} | Protools`}
+					content={`${i18n.language === 'uz'
+						? data?.title_uz
+						: data?.title_ru
+						} | Protools`}
 				/>
 				<meta
 					property='og:description'
-					content={`${
-						i18n.language === 'uz'
-							? data?.description
-							: data?.additionalInfos.find(info => info.key === 'descriptionRu')
-									?.value
-					}
+					content={`${i18n.language === 'uz'
+						? data?.description_uz
+						: data?.description_ru
+						}
 `}
 				/>
 				<meta property='og:type' content='website' />
@@ -209,7 +201,7 @@ function Product() {
 													<img src={item.image} alt='catalog img' />
 												</span>
 												<span className='catalog_info'>
-													{i18n.language === 'uz' ? item.slug : item.title}
+													{i18n.language === 'uz' ? item.title_uz : item.title_ru}
 												</span>
 											</a>
 										))}
@@ -218,9 +210,8 @@ function Product() {
 							<div className='main_right'>
 								<h2 className='product_mobile_caption'>
 									{i18n.language === 'uz'
-										? data?.title
-										: data?.additionalInfos.find(info => info.key === 'titleRu')
-												?.value}
+										? data?.title_uz
+										: data?.title_ru}
 								</h2>
 								<div className='product_wrapper'>
 									<div className='product_left'>
@@ -237,7 +228,7 @@ function Product() {
 											{data.images &&
 												data?.images.map((item, index) => (
 													<SwiperSlide key={index} className='swiper_card'>
-														<img src={item} alt={data.title} />
+														<img src={item} alt={data.title_uz} />
 													</SwiperSlide>
 												))}
 										</Swiper>
@@ -268,7 +259,7 @@ function Product() {
 											{data.images &&
 												data?.images.map((item, index) => (
 													<SwiperSlide key={index}>
-														<img src={item} alt={data.title} key={index} />
+														<img src={item} alt={data.title_uz} key={index} />
 													</SwiperSlide>
 												))}
 										</Swiper>
@@ -276,69 +267,49 @@ function Product() {
 									<div className='product_right'>
 										<h2 className='product_right_title'>
 											{i18n.language === 'uz'
-												? data?.title
-												: data?.additionalInfos.find(
-														info => info.key === 'titleRu'
-												  )?.value}
+												? data?.title_uz
+												: data?.title_ru}
 										</h2>
 										<span className='product_right_info'>
 											{i18n.language === 'uz'
-												? data?.description
-												: data?.additionalInfos.find(
-														info => info.key === 'descriptionRu'
-												  )?.value}
+												? data?.description_uz
+												: data?.description_ru}
 										</span>
 										<div className='product_right_box'>
 											<span className='product_right_price'>
 												{data?.price !== 0
 													? `${data?.price?.toLocaleString({
-															style: 'currency',
-															minimumFractionDigits: 0,
-															currency: 'UZS',
-													  })} ${t('Sum')} `
+														style: 'currency',
+														minimumFractionDigits: 0,
+														currency: 'UZS',
+													})} ${t('Sum')} `
 													: ''}
 											</span>
 											<div className='product_right_box_texts'>
 												<span>
 													{t('In_stock')}{' '}
-													<b className={data.excerpt ? 'stats' : 'un_stats'}>
-														{data.excerpt ? t('Stock') : t('UnStock')}
+													<b className={data.excerpt_uz ? 'stats' : 'un_stats'}>
+														{data.excerpt_uz ? t('Stock') : t('UnStock')}
 													</b>
 												</span>
-												<span>
-													{t('Model')}:
+												{data?.brand && (
+													<span>
+														{t('Model')}:
+														<a
+															href={`/brand/${data?.brand?._id}`}
+															className='model'
+														>
+															{i18n.language === 'uz' ? data?.brand?.name_uz : data?.brand?.name_ru}
+														</a>
+													</span>
+												)}
+												{data?.brand && (
 													<a
-														href={`/brand/${
-															data?.additionalInfos?.find(
-																info => info.key === 'brand'
-															)?.value
-														}`}
-														className='model'
-													>
-														{
-															data?.additionalInfos?.find(
-																info => info.key === 'brand'
-															)?.value
-														}
-													</a>
-												</span>
-												{data?.additionalInfos?.find(
-													info => info.key === 'brandimage'
-												)?.value && (
-													<a
-														href={`/brand/${
-															data?.additionalInfos?.find(
-																info => info.key === 'brand'
-															)?.value
-														}`}
+														href={`/brand/${data?.brand?._id}`}
 														className='brend'
 													>
 														<img
-															src={
-																data?.additionalInfos?.find(
-																	info => info.key === 'brandimage'
-																)?.value
-															}
+															src={data?.brand?.image}
 															alt='brand logo'
 														/>
 													</a>
@@ -454,14 +425,12 @@ function Product() {
 											}
 										>
 											<span>
-												{typeof data?.description === 'string'
+												{(i18n.language === 'uz' ? data?.description_uz : data?.description_ru)
 													? parse(
-															i18n.language === 'uz'
-																? data?.description
-																: data?.additionalInfos.find(
-																		info => info.key === 'descriptionRu'
-																  )?.value || ''
-													  )
+														i18n.language === 'uz'
+															? data?.description_uz
+															: data?.description_ru
+													)
 													: null}
 											</span>
 										</div>

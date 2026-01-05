@@ -1,5 +1,5 @@
 import { Pagination, Skeleton, Tabs } from 'antd'
-import axios from 'axios'
+import api from '../../api'
 import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useTranslation } from 'react-i18next'
@@ -29,7 +29,7 @@ function Brand() {
 		limit: 14,
 		pagesCount: 1,
 	})
-	const URL = 'https://api.protools.uz/v1'
+	const URL = ''
 	const { addLike, addCart, isLike, handleShare } = useDataContext()
 	const [viewMode, setViewMode] = useState('grid')
 	const { t, i18n } = useTranslation()
@@ -37,17 +37,17 @@ function Brand() {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const res = await axios.get(
-					`${URL}/products?additionalInfos.value=${title}&page=${currentPage}&limit=${params.limit}`
+				const res = await api.get(
+					`/products?brandId=${title}&page=${currentPage}&limit=${params.limit}&status=ACTIVE`
 				)
 
 				setData(res.data)
 				setParams({
-					resultCount: res.data.resultCount,
-					totalCount: res.data.totalCount,
+					resultCount: res.data.pagination.total, // Using total for resultCount
+					totalCount: res.data.pagination.total,
 					currentPage: currentPage,
 					limit: params.limit,
-					pagesCount: Math.ceil(res.data.totalCount / params.limit),
+					pagesCount: Math.ceil(res.data.pagination.total / params.limit),
 				})
 				setLoading(false)
 			} catch (error) {
@@ -56,7 +56,7 @@ function Brand() {
 		}
 
 		fetchData()
-	}, [title, currentPage, params.limit, URL])
+	}, [title, currentPage, params.limit])
 
 	const handlePageChange = page => {
 		setCurrentPage(page)
@@ -97,10 +97,8 @@ function Brand() {
 											image={item.images[0]}
 											title={
 												i18n.language === 'uz'
-													? item?.title
-													: item?.additionalInfos.find(
-															info => info.key === 'titleRu'
-													  )?.value
+													? item?.title_uz
+													: item?.title_ru
 											}
 											price={item.price}
 											path={`/product/${item.slug}`}

@@ -1,5 +1,5 @@
 import { Pagination } from 'antd'
-import axios from 'axios'
+import api from '../../api'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
@@ -31,15 +31,15 @@ function Categories() {
 	}, [])
 
 	const fetchData = page => {
-		axios
+		api
 			.get(
-				`https://api.protools.uz/v1/categories?&limit=${params.limit}&page=${page}`
+				`/categories?limit=${params.limit}&page=${page}`
 			)
 			.then(res => {
 				setData(res.data.data)
-				setResultCount(res.data.resultCount)
-				setTotalCount(res.data.totalCount)
-				setPagesCount(res.data.pagesCount)
+				setResultCount(res.data.pagination?.total || 0)
+				setTotalCount(res.data.pagination?.total || 0)
+				setPagesCount(Math.ceil((res.data.pagination?.total || 0) / params.limit))
 				setLoading(false)
 			})
 			.catch(error => {
@@ -82,7 +82,7 @@ function Categories() {
 								<Link key={index} to={`/category/${item?._id}`}>
 									<CategoryCards
 										image={item.image}
-										text={i18n.language === 'uz' ? item?.title : item?.slug}
+										text={i18n.language === 'uz' ? item?.title_uz : item?.title_ru}
 									/>
 								</Link>
 							))

@@ -3,17 +3,17 @@ import React, { useEffect, useState } from 'react'
 import '../global.scss'
 
 import { Skeleton } from 'antd'
-import axios from 'axios'
+import api from '../api'
 import { useTranslation } from 'react-i18next'
 
 function Companies() {
 	const [data, setData] = useState([])
 	const [loading, setLoading] = useState(true)
-	const { t } = useTranslation()
+	const { t, i18n } = useTranslation()
 
 	useEffect(() => {
-		axios
-			.get(`https://api.protools.uz/v1/brands`)
+		api
+			.get(`/brands`)
 			.then(res => {
 				setData(res.data.data)
 				setLoading(false)
@@ -43,11 +43,11 @@ function Companies() {
 					) : (
 						data?.map((item, index) => (
 							<a
-								href={`/brand/${item.name}`}
+								href={`/brand/${item._id}`}
 								className='companies_box'
 								key={index}
 							>
-								<img src={item.image} alt={item.name} />
+								<img src={item.image} alt={i18n.language === 'uz' ? item.name_uz : item.name_ru} />
 							</a>
 						))
 					)}
