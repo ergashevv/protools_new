@@ -10,14 +10,21 @@ import '../global.scss'
 import Loadingcard from './loadingcard'
 import ProductCard from './productCard'
 
-function Products({ title }) {
-	const { slug } = useParams()
+function Products({ title, slug: propSlug }) {
+	const { slug: paramSlug } = useParams()
+	const slug = propSlug || paramSlug
 	const [data, setData] = useState([])
 	const [loading, setLoading] = useState(true)
 	const { addLike, addCart, isLike, handleShare } = useDataContext()
 	const { i18n } = useTranslation()
 
 	useEffect(() => {
+		// Skip fetching if no slug is available
+		if (!slug) {
+			setLoading(false)
+			return
+		}
+
 		api
 			.get(`/products/slug/${slug}`)
 			.then(res => {
