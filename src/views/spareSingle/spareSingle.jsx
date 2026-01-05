@@ -239,8 +239,8 @@ function SpareSingle() {
 											<div className='spareSingle_right_box_texts'>
 												<span>
 													{t('In_stock')}{' '}
-													<b className={data[0].status ? 'stats' : 'un_stats'}>
-														{data[0].status ? t('Stock') : t('UnStock')}
+													<b className={data[0]?.status ? 'stats' : 'un_stats'}>
+														{data[0]?.status ? t('Stock') : t('UnStock')}
 													</b>
 												</span>
 												<span>

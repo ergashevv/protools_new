@@ -19,38 +19,44 @@ function Brand() {
 	const initialPage =
 		parseInt(new URLSearchParams(window.location.search).get('page')) || 1
 	const [currentPage, setCurrentPage] = useState(initialPage)
-	const [data, setData] = useState([])
+	const [data, setData] = useState({ data: [] })
+	const [brand, setBrand] = useState(null)
 	const [loading, setLoading] = useState(true)
 	const [postsPerPage] = useState(10)
 	const [params, setParams] = useState({
-		resultCount: 1,
-		totalCount: 1,
+		resultCount: 0,
+		totalCount: 0,
 		currentPage: 1,
 		limit: 14,
 		pagesCount: 1,
 	})
-	const URL = ''
 	const { addLike, addCart, isLike, handleShare } = useDataContext()
 	const [viewMode, setViewMode] = useState('grid')
 	const { t, i18n } = useTranslation()
+	const brandTitle = brand ? (i18n.language === 'uz' ? brand.name_uz : brand.name_ru) : title;
 
 	useEffect(() => {
 		const fetchData = async () => {
+			setLoading(true)
 			try {
-				const res = await api.get(
-					`/products?brandId=${title}&page=${currentPage}&limit=${params.limit}&status=ACTIVE`
-				)
+				const [productsRes, brandRes] = await Promise.all([
+					api.get(`/products?brandId=${title}&page=${currentPage}&limit=${params.limit}&status=ACTIVE`),
+					api.get(`/brands/${title}`)
+				])
 
-				setData(res.data)
+				setData(productsRes.data)
+				setBrand(brandRes.data.data)
 				setParams({
-					resultCount: res.data.pagination.total, // Using total for resultCount
-					totalCount: res.data.pagination.total,
+					resultCount: productsRes.data.pagination?.total || 0,
+					totalCount: productsRes.data.pagination?.total || 0,
 					currentPage: currentPage,
 					limit: params.limit,
-					pagesCount: Math.ceil(res.data.pagination.total / params.limit),
+					pagesCount: Math.ceil((productsRes.data.pagination?.total || 0) / params.limit),
 				})
-				setLoading(false)
 			} catch (error) {
+				console.error('Error fetching brand data:', error)
+				setData({ data: [] })
+			} finally {
 				setLoading(false)
 			}
 		}
@@ -80,7 +86,7 @@ function Brand() {
 	} else if (data.data.length > 0) {
 		content = (
 			<>
-				<h2 className='brandFilter_title'>{`${title} (${data?.totalCount})`}</h2>
+				<h2 className='brandFilter_title'>{`${brandTitle} (${params.totalCount})`}</h2>
 				<div className='brandFilter_center'>
 					<div className='brandFilter_right'>
 						<Tabs defaultActiveKey='grid' onChange={toggleViewMode}>
@@ -149,10 +155,10 @@ function Brand() {
 	return (
 		<div className='brandFilter'>
 			<Helmet>
-				<title>{`${title} | Protools`}</title>
-				<meta property='og:title' content={`${title} | Protools`} />
+				<title>{`${brandTitle} | Protools`}</title>
+				<meta property='og:title' content={`${brandTitle} | Protools`} />
 			</Helmet>
-			<Breadcrumbs href={window.location.href} title={title} />
+			<Breadcrumbs href={window.location.href} title={brandTitle} />
 			<div className='container'>{content}</div>
 		</div>
 	)
