@@ -1,0 +1,9 @@
+.spareProducts {
+	padding: 150px 0;
+
+	.spareProducts_wrap {
+		display: grid;
+		grid-template-columns: repeat(6, 1fr);
+		gap: 30px;
+	}
+}
