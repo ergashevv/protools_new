@@ -103,6 +103,9 @@ function SearchResult() {
 										path={`/product/${item.slug}`}
 										like={isLike(item)}
 										handlerShare={() => handleShare(item)}
+										excerpt={item.excerpt_uz}
+										quantity={item.quantity}
+										status={item.status}
 										key={index}
 									/>
 								))

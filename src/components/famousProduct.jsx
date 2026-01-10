@@ -110,6 +110,7 @@ function FamousProduct() {
 									handlerShare={() => handleShare(item)}
 									excerpt={item.excerpt_uz}
 									quantity={item.quantity}
+									status={item.status}
 								/>
 							</SwiperSlide>
 						))}

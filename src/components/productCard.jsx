@@ -13,10 +13,11 @@ function ProductCard({
 	like,
 	excerpt,
 	quantity,
+	status,
 }) {
 	const { t } = useTranslation()
-	// Check stock: use quantity if available, otherwise fall back to excerpt (for backward compatibility)
-	const inStock = (quantity !== undefined && quantity > 0) || excerpt
+	// Check stock: use status === 'ACTIVE' if available, then quantity > 0, otherwise fall back to excerpt (for backward compatibility)
+	const inStock = status === 'ACTIVE' || (quantity !== undefined && quantity > 0) || excerpt
 	return (
 		<div className='product_card'>
 			<Link to={path}>

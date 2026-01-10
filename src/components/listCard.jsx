@@ -28,8 +28,8 @@ function ListCard({ data }) {
 			</div>
 			<div className='right'>
 				<div className='right_top'>
-					<span className={(data.quantity && data.quantity > 0) || excerpt_uz ? "yeah" : "no_yeah"}>
-						{(data.quantity && data.quantity > 0) || excerpt_uz ? t('Stock') : t('UnStock')}
+					<span className={data.status === 'ACTIVE' || (data.quantity && data.quantity > 0) || excerpt_uz ? "yeah" : "no_yeah"}>
+						{data.status === 'ACTIVE' || (data.quantity && data.quantity > 0) || excerpt_uz ? t('Stock') : t('UnStock')}
 					</span>
 					<a
 						href={`/brand/${data?.brand?._id}`}

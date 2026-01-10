@@ -288,8 +288,8 @@ function Product() {
 											<div className='product_right_box_texts'>
 												<span>
 													{t('In_stock')}{' '}
-													<b className={(data.quantity && data.quantity > 0) || data.excerpt_uz ? 'stats' : 'un_stats'}>
-														{(data.quantity && data.quantity > 0) || data.excerpt_uz ? t('Stock') : t('UnStock')}
+													<b className={data.status === 'ACTIVE' || (data.quantity && data.quantity > 0) || data.excerpt_uz ? 'stats' : 'un_stats'}>
+														{data.status === 'ACTIVE' || (data.quantity && data.quantity > 0) || data.excerpt_uz ? t('Stock') : t('UnStock')}
 													</b>
 												</span>
 												{data?.brand && (

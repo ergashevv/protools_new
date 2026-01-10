@@ -155,7 +155,9 @@ function Category() {
 											path={`/product/${item.slug}`}
 											handlerShare={() => handleShare(item)}
 											like={isLike(item)}
-											excerpt={item.excerpt}
+											excerpt={item.excerpt_uz}
+											quantity={item.quantity}
+											status={item.status}
 											key={item._id}
 										/>
 									))}
