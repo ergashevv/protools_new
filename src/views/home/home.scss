@@ -498,6 +498,7 @@
 				display: -webkit-box;
 				-webkit-box-orient: vertical;
 				-webkit-line-clamp: 2;
+				line-clamp: 2;
 				width: 100%;
 			}
 
@@ -556,8 +557,75 @@
 			.slick-list {
 				.slick-track {
 					.slider_top {
+						.slider_top_link {
+							height: 175px;
+						}
+
 						img {
 							height: 175px;
+						}
+
+						.slider_top_overlay {
+							padding: 20px 16px;
+
+							.slider_overlay_content {
+								.overlay_title {
+									font-size: 20px;
+									line-height: 28px;
+									margin-bottom: 8px;
+								}
+
+								.overlay_description {
+									font-size: 14px;
+									line-height: 20px;
+									-webkit-line-clamp: 2;
+									line-clamp: 2;
+									margin-bottom: 6px;
+								}
+
+								.news_badge {
+									padding: 4px 12px;
+									font-size: 12px;
+									margin-top: 4px;
+								}
+							}
+
+							.slider_overlay_discount {
+								.discount_badge {
+									padding: 8px 16px;
+									font-size: 18px;
+									margin-bottom: 8px;
+								}
+
+								.overlay_title {
+									font-size: 22px;
+									line-height: 28px;
+									margin-bottom: 8px;
+								}
+
+								.discount_text {
+									font-size: 14px;
+									line-height: 20px;
+									margin-bottom: 8px;
+								}
+
+								.discount_prices {
+									gap: 8px;
+									margin-bottom: 6px;
+
+									.old_price {
+										font-size: 16px;
+									}
+
+									.new_price {
+										font-size: 20px;
+									}
+								}
+
+								.discount_valid {
+									font-size: 12px;
+								}
+							}
 						}
 					}
 				}
