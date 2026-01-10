@@ -11,8 +11,9 @@ const Carousel = () => {
 	const [data, setData] = useState([])
 
 	useEffect(() => {
+		// Fetch all banners (banner, news, discount) - barcha bannerlar birga ko'rsatiladi
 		api
-			.get(`/banners?type=banner`)
+			.get(`/banners`)
 			.then(response => {
 				setData(response.data.data)
 				setLoading(false)
@@ -49,20 +50,34 @@ const Carousel = () => {
 				</>
 			) : (
 				<div className='slider-container'>
-					<Slider {...settingsTop}>
-						{data.map((item, index) => (
-							<div className='slider_top' key={index}>
-								<Link to={item.link}>
-									<img
-										src={item.imageUrl}
-										alt={item.title_uz}
-										width={100}
-										height={480}
-									/>
-								</Link>
-							</div>
-						))}
-					</Slider>
+					{data.length > 0 ? (
+						<Slider {...settingsTop}>
+							{data.map((item, index) => {
+								// Support both camelCase and snake_case formats for backward compatibility
+								const imageUrl = item.imageUrl || item.image_url
+								const titleUz = item.title_uz || item.titleUz
+								const titleRu = item.title_ru || item.titleRu
+								const link = item.link || '#'
+								
+								return (
+									<div className='slider_top' key={index}>
+										<Link to={link}>
+											<img
+												src={imageUrl}
+												alt={titleUz || titleRu || 'Banner'}
+												width={100}
+												height={480}
+											/>
+										</Link>
+									</div>
+								)
+							})}
+						</Slider>
+					) : (
+						<div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
+							Hozirda bannerlar mavjud emas
+						</div>
+					)}
 				</div>
 			)}
 		</div>
