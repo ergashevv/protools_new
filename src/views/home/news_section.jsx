@@ -35,6 +35,11 @@ function NewsSection() {
 			})
 	}, [])
 
+	// Don't show news section if there are no news items
+	if (!loading && (!data || data.length === 0)) {
+		return null;
+	}
+
 	return (
 		<div className='news'>
 			<div className='container'>
