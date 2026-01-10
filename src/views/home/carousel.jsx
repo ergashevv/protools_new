@@ -15,10 +15,14 @@ const Carousel = () => {
 		api
 			.get(`/banners`)
 			.then(response => {
-				setData(response.data.data)
+				console.log('Banners API response:', response.data)
+				// Handle different response formats
+				const bannersData = response.data?.data || response.data || []
+				setData(Array.isArray(bannersData) ? bannersData : [])
 				setLoading(false)
 			})
 			.catch(error => {
+				console.error('Error fetching banners:', error)
 				setLoading(false)
 			})
 	}, [])
