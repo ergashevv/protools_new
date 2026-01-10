@@ -56,26 +56,47 @@ const Carousel = () => {
 				<div className='slider-container'>
 					{data.length > 0 ? (
 						<Slider {...settingsTop}>
-							{data.map((item, index) => {
-								// Support both camelCase and snake_case formats for backward compatibility
-								const imageUrl = item.imageUrl || item.image_url
-								const titleUz = item.title_uz || item.titleUz
-								const titleRu = item.title_ru || item.titleRu
-								const link = item.link || '#'
-								
-								return (
-									<div className='slider_top' key={index}>
-										<Link to={link}>
-											<img
-												src={imageUrl}
-												alt={titleUz || titleRu || 'Banner'}
-												width={100}
-												height={480}
-											/>
-										</Link>
-									</div>
-								)
-							})}
+							{data
+								.filter(item => {
+									// Filter out items without imageUrl
+									const imageUrl = item.imageUrl || item.image_url
+									return imageUrl && imageUrl.trim() !== ''
+								})
+								.map((item, index) => {
+									// Support both camelCase and snake_case formats for backward compatibility
+									const imageUrl = item.imageUrl || item.image_url
+									const titleUz = item.title_uz || item.titleUz
+									const titleRu = item.title_ru || item.titleRu
+									const link = item.link || '#'
+									const bannerType = item.type || 'banner' // banner, news, discount
+									
+									// Debug log
+									console.log('Banner item:', { 
+										imageUrl, 
+										titleUz, 
+										titleRu, 
+										link, 
+										type: bannerType,
+										item 
+									})
+									
+									return (
+										<div className='slider_top' key={item.id || item._id || index}>
+											<Link to={link}>
+												<img
+													src={imageUrl}
+													alt={titleUz || titleRu || 'Banner'}
+													width={100}
+													height={480}
+													onError={(e) => {
+														console.error('Image load error:', imageUrl, 'Banner type:', bannerType)
+														e.target.style.display = 'none'
+													}}
+												/>
+											</Link>
+										</div>
+									)
+								})}
 						</Slider>
 					) : (
 						<div className='empty_banner'>
