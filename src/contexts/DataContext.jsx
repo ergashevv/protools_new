@@ -53,15 +53,37 @@ export const DataProvider = ({ children }) => {
 
 	const addCart = product => {
 		const existingProduct = carts.find(p => p?._id === product?._id)
+		
+		// Get product stock quantity (available in stock)
+		const stockQuantity = product.quantity || 0
+		
+		// Check if product is available (status === 'ACTIVE' and has stock)
+		if (product.status !== 'ACTIVE' || stockQuantity <= 0) {
+			notification.warning({
+				message: 'Mahsulot mavjud emas',
+				description: 'Bu mahsulot hozirda sotuvda mavjud emas.',
+			})
+			return
+		}
 
 		if (existingProduct) {
+			// Check if adding one more would exceed stock
+			if (existingProduct.quantity >= existingProduct.stockQuantity) {
+				notification.warning({
+					message: 'Sklad miqdori yetarli emas',
+					description: `Skladda faqat ${existingProduct.stockQuantity} ta mahsulot mavjud.`,
+				})
+				return
+			}
+			
 			const updatedCarts = carts.map(p =>
 				p._id === product?._id ? { ...p, quantity: p.quantity + 1 } : p
 			)
 			setCarts(updatedCarts)
 			localStorage.setItem('carts', JSON.stringify(updatedCarts))
 		} else {
-			const updatedCarts = [...carts, { ...product, quantity: 1 }]
+			// Save stock quantity separately from cart quantity
+			const updatedCarts = [...carts, { ...product, quantity: 1, stockQuantity: stockQuantity }]
 			setCarts(updatedCarts)
 			localStorage.setItem('carts', JSON.stringify(updatedCarts))
 		}
@@ -89,6 +111,22 @@ export const DataProvider = ({ children }) => {
 	}
 
 	const incrementCartItem = productId => {
+		const product = carts.find(p => p._id === productId)
+		
+		if (!product) return
+		
+		// Get product stock quantity (available in stock)
+		const stockQuantity = product.stockQuantity || product.quantity || 0
+		
+		// Check if adding one more would exceed stock
+		if (product.quantity >= stockQuantity) {
+			notification.warning({
+				message: 'Sklad miqdori yetarli emas',
+				description: `Skladda faqat ${stockQuantity} ta mahsulot mavjud.`,
+			})
+			return
+		}
+		
 		const updatedCarts = carts.map(p =>
 			p._id === productId ? { ...p, quantity: p.quantity + 1 } : p
 		)

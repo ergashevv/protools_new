@@ -56,37 +56,52 @@ function Basket() {
 								</span>
 								<div className='basket_card_right'>
 									{item.price !== 0 && (
-										<div className='basket_wrap_count'>
-											<button onClick={() => decrementCartItem(item._id)}>
-												<svg
-													xmlns='http://www.w3.org/2000/svg'
-													width='7'
-													height='4'
-													viewBox='0 0 7 4'
-													fill='none'
+										<>
+											<div className='basket_wrap_count'>
+												<button 
+													onClick={() => decrementCartItem(item._id)}
+													disabled={item.quantity <= 1}
+													style={{ opacity: item.quantity <= 1 ? 0.5 : 1, cursor: item.quantity <= 1 ? 'not-allowed' : 'pointer' }}
 												>
-													<path
-														d='M6.42982 0.94043V3.06043H0.569824V0.94043H6.42982Z'
-														fill='#4A5056'
-													/>
-												</svg>
-											</button>
-											<span>{item.quantity}</span>
-											<button onClick={() => incrementCartItem(item._id)}>
-												<svg
-													xmlns='http://www.w3.org/2000/svg'
-													width='11'
-													height='12'
-													viewBox='0 0 11 12'
-													fill='none'
+													<svg
+														xmlns='http://www.w3.org/2000/svg'
+														width='7'
+														height='4'
+														viewBox='0 0 7 4'
+														fill='none'
+													>
+														<path
+															d='M6.42982 0.94043V3.06043H0.569824V0.94043H6.42982Z'
+															fill='#4A5056'
+														/>
+													</svg>
+												</button>
+												<span>{item.quantity}</span>
+												<button 
+													onClick={() => incrementCartItem(item._id)}
+													disabled={item.quantity >= (item.stockQuantity || item.quantity || 0)}
+													style={{ opacity: item.quantity >= (item.stockQuantity || item.quantity || 0) ? 0.5 : 1, cursor: item.quantity >= (item.stockQuantity || item.quantity || 0) ? 'not-allowed' : 'pointer' }}
 												>
-													<path
-														d='M4.47008 11.1496V6.94961H0.330078V5.04961H4.47008V0.849609H6.51008V5.04961H10.6701V6.94961H6.51008V11.1496H4.47008Z'
-														fill='#4A5056'
-													/>
-												</svg>
-											</button>
-										</div>
+													<svg
+														xmlns='http://www.w3.org/2000/svg'
+														width='11'
+														height='12'
+														viewBox='0 0 11 12'
+														fill='none'
+													>
+														<path
+															d='M4.47008 11.1496V6.94961H0.330078V5.04961H4.47008V0.849609H6.51008V5.04961H10.6701V6.94961H6.51008V11.1496H4.47008Z'
+															fill='#4A5056'
+														/>
+													</svg>
+												</button>
+											</div>
+											{(item.stockQuantity || item.quantity) && (
+												<div style={{ fontSize: '12px', color: '#666', marginTop: '4px', textAlign: 'center' }}>
+													Skladda: {item.stockQuantity || item.quantity} ta
+												</div>
+											)}
+										</>
 									)}
 									<button
 										onClick={() => removeCartItem(item._id)}

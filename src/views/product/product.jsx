@@ -323,7 +323,14 @@ function Product() {
 										<div className='product_right_bottom_box'>
 											<div className='buttons_wrap'>
 												<div className='count_wrap'>
-													<button onClick={() => decrementCartItem(data?._id)}>
+													<button 
+														onClick={() => decrementCartItem(data?._id)}
+														disabled={!carts.find(item => item._id === data._id) || carts.find(item => item._id === data._id)?.quantity <= 1}
+														style={{ 
+															opacity: (!carts.find(item => item._id === data._id) || carts.find(item => item._id === data._id)?.quantity <= 1) ? 0.5 : 1, 
+															cursor: (!carts.find(item => item._id === data._id) || carts.find(item => item._id === data._id)?.quantity <= 1) ? 'not-allowed' : 'pointer' 
+														}}
+													>
 														<svg
 															xmlns='http://www.w3.org/2000/svg'
 															width='7'
@@ -341,7 +348,14 @@ function Product() {
 														{carts.find(item => item._id === data._id)
 															?.quantity || 0}
 													</span>
-													<button onClick={() => incrementCartItem(data?._id)}>
+													<button 
+														onClick={() => incrementCartItem(data?._id)}
+														disabled={!carts.find(item => item._id === data._id) || (carts.find(item => item._id === data._id)?.quantity || 0) >= (data.quantity || 0)}
+														style={{ 
+															opacity: (!carts.find(item => item._id === data._id) || (carts.find(item => item._id === data._id)?.quantity || 0) >= (data.quantity || 0)) ? 0.5 : 1, 
+															cursor: (!carts.find(item => item._id === data._id) || (carts.find(item => item._id === data._id)?.quantity || 0) >= (data.quantity || 0)) ? 'not-allowed' : 'pointer' 
+														}}
+													>
 														<svg
 															xmlns='http://www.w3.org/2000/svg'
 															width='11'
