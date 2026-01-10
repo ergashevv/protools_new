@@ -12,15 +12,20 @@ function ProductCard({
 	pressLike,
 	like,
 	excerpt,
+	quantity,
 }) {
 	const { t } = useTranslation()
+	// Check stock: use quantity if available, otherwise fall back to excerpt (for backward compatibility)
+	const inStock = (quantity !== undefined && quantity > 0) || excerpt
 	return (
 		<div className='product_card'>
 			<Link to={path}>
 				<div className='product_card_image_wrap'>
 					<img src={image} alt={title} loading='lazy' />
 				</div>
-				<div className={excerpt ? 'stats' : 'un_stats'}>{excerpt ? t('Stock') : t('UnStock')}</div>
+				<div className={inStock ? 'stats' : 'un_stats'}>
+					{inStock ? t('Stock') : t('UnStock')}
+				</div>
 				<h4>{title}</h4>
 			</Link>
 			<div className='product_card_bottom_wrap'>

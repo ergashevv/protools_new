@@ -24,7 +24,7 @@ function NewsSection() {
 
 	useEffect(() => {
 		api
-			.get('/articles')
+			.get('/banners?type=news')
 			.then(res => {
 				setData(res.data.data)
 				setLoading(false)
@@ -60,14 +60,36 @@ function NewsSection() {
 							</div>
 						</>
 					) : (
-						data?.slice(0, 3).map((video, index) => (
-							<div className='news_video' key={index}>
-								<YouTube videoId={video.excerpt_uz} className='video' />
-								<h3>{i18n.language === 'uz' ? video.title_uz : video.title_ru}</h3>
-								<p>{i18n.language === 'uz' ? video.body_uz : video.body_ru}</p>
-								<span>{formatDate(video.createdAt)}</span>
-							</div>
-						))
+						data?.slice(0, 3).map((video, index) => {
+							// Support both camelCase and snake_case formats for backward compatibility
+							const excerptUz = video.excerptUz || video.excerpt_uz
+							const titleUz = video.titleUz || video.title_uz
+							const titleRu = video.titleRu || video.title_ru
+							const descriptionUz = video.descriptionUz || video.description_uz
+							const descriptionRu = video.descriptionRu || video.description_ru
+							const bodyUz = video.bodyUz || video.body_uz
+							const bodyRu = video.bodyRu || video.body_ru
+							const imageUrl = video.imageUrl || video.image_url
+							
+							return (
+								<div className='news_video' key={index}>
+									{excerptUz ? (
+										<YouTube videoId={excerptUz} className='video' />
+									) : (
+										<Link to={video.link || '#'}>
+											<img
+												src={imageUrl}
+												alt={i18n.language === 'uz' ? titleUz : titleRu}
+												style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+											/>
+										</Link>
+									)}
+									<h3>{i18n.language === 'uz' ? titleUz : titleRu}</h3>
+									<p>{i18n.language === 'uz' ? descriptionUz || bodyUz : descriptionRu || bodyRu}</p>
+									<span>{formatDate(video.createdAt)}</span>
+								</div>
+							)
+						})
 					)}
 				</div>
 			</div>

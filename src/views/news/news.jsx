@@ -2,6 +2,7 @@ import { Pagination, Skeleton } from 'antd'
 import api from '../../api'
 import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
+import { Link } from 'react-router-dom'
 import YouTube from 'react-youtube'
 import notData from '../../assets/svg/noData.svg'
 import '../../global.scss'
@@ -28,7 +29,7 @@ function News() {
 				const initialPage = pageParam ? parseInt(pageParam, 10) : 1
 
 				const response = await api.get(
-					`/articles?limit=${postsPerPage}&page=${initialPage}`
+					`/banners?type=news&limit=${postsPerPage}&page=${initialPage}`
 				)
 				setData(response.data.data)
 				setResultCount(response.data.pagination?.total || 0)
@@ -107,14 +108,42 @@ function News() {
 							</div>
 						</>
 					) : resultCount > 0 ? (
-						currentPosts.map((item, index) => (
-							<div className='news_video' key={index}>
-								<YouTube videoId={item.excerpt_uz} className='video' />
-								<h3>{i18n.language === 'uz' ? item.title_uz : item.title_ru}</h3>
-								<p>{i18n.language === 'uz' ? item.body_uz : item.body_ru}</p>
-								<span>{formatDate(item.createdAt)}</span>
-							</div>
-						))
+						currentPosts.map((item, index) => {
+							// Support both camelCase and snake_case formats for backward compatibility
+							const excerptUz = item.excerpt_uz || item.excerptUz
+							const titleUz = item.title_uz || item.titleUz
+							const titleRu = item.title_ru || item.titleRu
+							const bodyUz = item.body_uz || item.bodyUz
+							const bodyRu = item.body_ru || item.bodyRu
+							const imageUrl = item.image_url || item.imageUrl
+							
+							return (
+								<div className='news_video' key={index}>
+									{excerptUz ? (
+										<YouTube videoId={excerptUz} className='video' />
+									) : (
+										item.link ? (
+											<Link to={item.link}>
+												<img
+													src={imageUrl}
+													alt={i18n.language === 'uz' ? titleUz : titleRu}
+													style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+												/>
+											</Link>
+										) : (
+											<img
+												src={imageUrl}
+												alt={i18n.language === 'uz' ? titleUz : titleRu}
+												style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+											/>
+										)
+									)}
+									<h3>{i18n.language === 'uz' ? titleUz : titleRu}</h3>
+									<p>{i18n.language === 'uz' ? bodyUz || item.description_uz || item.descriptionUz : bodyRu || item.description_ru || item.descriptionRu}</p>
+									<span>{formatDate(item.createdAt)}</span>
+								</div>
+							)
+						})
 					) : (
 						<img
 							src={notData}

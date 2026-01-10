@@ -12,7 +12,7 @@ const Carousel = () => {
 
 	useEffect(() => {
 		api
-			.get(`/banners`)
+			.get(`/banners?type=banner`)
 			.then(response => {
 				setData(response.data.data)
 				setLoading(false)

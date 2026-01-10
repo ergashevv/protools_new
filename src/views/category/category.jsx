@@ -38,16 +38,13 @@ function Category() {
 
 	useEffect(() => {
 		api
-			.get(`/categories?parentId=all&limit=100`)
+			.get(`/categories/${id}`)
 			.then(res => {
-				setTitle(
-					res?.data?.data
-						.flatMap(i => [i, ...(i.children || [])])
-						.filter(child => child._id === id || child.id === parseInt(id))
-						.map(child => child)
-				)
+				setTitle([res.data.data])
 			})
-			.catch(err => { })
+			.catch(err => {
+				console.error('Error fetching category details:', err)
+			})
 		const fetchData = async () => {
 			try {
 				const res = await api.get(

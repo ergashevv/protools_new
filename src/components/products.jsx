@@ -120,6 +120,7 @@ function Products({ title, slug: propSlug }) {
 									like={isLike(item)}
 									handlerShare={() => handleShare(item)}
 									excerpt={item.excerpt_uz}
+									quantity={item.quantity}
 								/>
 							</SwiperSlide>
 						))}

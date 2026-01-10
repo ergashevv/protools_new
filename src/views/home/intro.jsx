@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import CountUp from 'react-countup'
+import api from '../../api'
 
 import { useTranslation } from 'react-i18next'
 import ScrollTrigger from 'react-scroll-trigger'
@@ -8,7 +9,23 @@ import './home.scss'
 
 function Intro() {
 	const [counterOn, setCounterOn] = useState(false)
+	const [productCount, setProductCount] = useState(6)
 	const { t } = useTranslation()
+
+	useEffect(() => {
+		api
+			.get('/dashboard/stats')
+			.then(response => {
+				if (response.data?.success && response.data?.data?.totalProducts) {
+					// Convert to thousands for display (e.g., 6000 -> 6k)
+					const count = Math.floor(response.data.data.totalProducts / 1000)
+					setProductCount(count > 0 ? count : 1)
+				}
+			})
+			.catch(error => {
+				console.error('Failed to fetch stats:', error)
+			})
+	}, [])
 
 	return (
 		<div className='intro'>
@@ -46,7 +63,7 @@ function Intro() {
 								<span>
 									<h3>
 										{counterOn && (
-											<CountUp start={0} end={6} duration={2} delay={1} />
+											<CountUp start={0} end={productCount} duration={2} delay={1} />
 										)}
 										k+
 									</h3>
