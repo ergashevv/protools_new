@@ -74,7 +74,7 @@ const Carousel = () => {
 							})}
 						</Slider>
 					) : (
-						<div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
+						<div className='empty_banner'>
 							Hozirda bannerlar mavjud emas
 						</div>
 					)}
