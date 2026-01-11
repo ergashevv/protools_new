@@ -456,7 +456,41 @@ function Product() {
 											}
 										>
 											<div className='characteristics_table'>
-												bu yerga tavsif yoziladi
+												{(() => {
+													// Parse specifications from additionalInfos
+													let specifications = [];
+													if (data?.additionalInfos && Array.isArray(data.additionalInfos)) {
+														const specsInfo = data.additionalInfos.find((info) => info.key === 'specifications');
+														if (specsInfo && specsInfo.value) {
+															specifications = Array.isArray(specsInfo.value) ? specsInfo.value : [];
+														}
+													}
+
+													if (specifications.length === 0) {
+														return (
+															<div style={{ padding: '20px', textAlign: 'center', color: '#999' }}>
+																{i18n.language === 'uz' ? 'Xususiyatlar mavjud emas' : 'Характеристики отсутствуют'}
+															</div>
+														);
+													}
+
+													return (
+														<table style={{ width: '100%', borderCollapse: 'collapse' }}>
+															<tbody>
+																{specifications.map((spec, index) => (
+																	<tr key={index} style={{ borderBottom: '1px solid #eee' }}>
+																		<td style={{ padding: '12px', fontWeight: 'bold', width: '40%', color: '#333' }}>
+																			{i18n.language === 'uz' ? (spec.key_uz || spec.key) : (spec.key_ru || spec.key)}
+																		</td>
+																		<td style={{ padding: '12px', color: '#666' }}>
+																			{i18n.language === 'uz' ? (spec.value_uz || spec.value) : (spec.value_ru || spec.value)}
+																		</td>
+																	</tr>
+																))}
+															</tbody>
+														</table>
+													);
+												})()}
 											</div>
 										</div>
 									</div>
